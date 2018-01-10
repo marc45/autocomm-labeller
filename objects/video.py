@@ -1,3 +1,5 @@
+import imageio
+import os
 from objects.json_serializable import JSer
 from objects.image import Image
 
@@ -38,22 +40,29 @@ class Video(JSer):
         """
         Returns a list of the images that make up the video
         """
-        pass
+        images = []
+        image_iterator = imageio.get_reader(os.path.basename(self.vidpath))
+        for img in image_iterator:
+            images.append(img)
+        return images
 
-    def get_image(self, ind: int) -> Image:
+    @property
+    def image(self, ind: int) -> Image:
         """
         Returns the image in the video that corresponds to the index in the images list
         :param ind: <int>, the index of the image that is taken from the images list
         """
         return self.images[ind]
 
-    def get_fps(self) -> float:
+    @property
+    def fps(self) -> float:
         """
         Returns the video's images per second
         """
         return self.fps
 
-    def set_fps(self, fps: float) -> None:
+    @fps.setter
+    def fps(self, fps: float) -> None:
         """
         Sets the video's images per second to be fps
         :param fps: <float>, the value for the images per second

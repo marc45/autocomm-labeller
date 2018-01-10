@@ -18,7 +18,6 @@ JSON Structure:
 
 class AppState:
     def __init__(self):
-        
         self.active_class = ''
         self.source_dir = ''
         self.images = ''
@@ -26,6 +25,7 @@ class AppState:
         self.classbar, self.toolbar, self.display = None, None, None
         self.boxes = []
         self.lanes = []
+        self.load_state()
 
     def add_box(self, c, top_left, bottom_right):
         self.boxes.append({'class': c, 'topLeft': top_left, 'bottom_right': bottom_right})
@@ -34,7 +34,17 @@ class AppState:
         upper, lower = (upper, lower) if upper[1] >= lower[1] else (lower, upper)
         self.lanes.append({'class': c, 'upper': upper, 'lower': lower})
 
-    # def write_state(self):
+    def write_state(self):
+        print(type(self.classes), type(self.source_dir))
+        with open('./config.json', 'w') as f:
+            json.dump({'classes': self.classes, 'sourceDir': self.source_dir}, f)
+
+    def load_state(self):
+        if os.path.exists('./config.json'):
+            with open('./config.json', 'r') as f:
+                json_dict = json.load(f)
+                self.classes = json_dict['classes']
+                self.source_dir = json_dict['sourceDir']
 
     def write_labels(self, source_name: str):
         hash = hashlib.sha256(source_name + str(random.randint(2e16))).hexdigest()
@@ -46,5 +56,5 @@ class AppState:
         label_dir_path = os.path.join(self.source_dir, '..', 'labels')
         if not os.path.exists(label_dir_path):
             os.makedirs(label_dir_path)
-        with open(os.join(self.source_dir, '..', 'labels', hash + '.label')) as f:
+        with open(os.path.join(self.source_dir, '..', 'labels', hash + '.json'), 'w') as f:
             json.dump(f, json_dict)

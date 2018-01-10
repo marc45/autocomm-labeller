@@ -66,6 +66,7 @@ class Toolbar(QWidget):
                                                    'QFileDialog.getExistingDirectory()',
                                                    '',
                                                    options=options) or os.getcwd()
+        dirpath = str(dirpath)
         self.set_source_dir(dirpath)
         self.state.display.load_sources(dirpath)
 

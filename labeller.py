@@ -53,6 +53,8 @@ class App(QWidget):
         self.main_widget = box
         return self.main_widget
 
+    def closeEvent(self, QCloseEvent):
+        self.state.write_state()
 
 app = QApplication(sys.argv)
 ex = App()

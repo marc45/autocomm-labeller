@@ -16,7 +16,9 @@ class Classbar(QWidget):
         self.layout = None
 
         self.init_gui()
-        for c in self.state.classes:
+        classes = list(self.state.classes)
+        self.state.classes = []
+        for c in classes:
             self.add_class(c)
 
     def init_gui(self):
@@ -56,6 +58,8 @@ class Classbar(QWidget):
         return box
 
     def add_class(self, name: str):
+        if name in self.classes.keys():
+            return
         self.classes[name] = QRadioButton(name)
         add_class = self.classes[name]
         self.classes_group.addButton(add_class)

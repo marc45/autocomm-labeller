@@ -3,18 +3,30 @@ from objects.image import Image
 
 
 class Video(JSer):
-    def __init__(self, images: list=None, json_dict: dict=None):
+    def __init__(self, vidpath: str='', json_dict: dict=None):
         """
-        :param images: [optional] <list<Image>>, a list of images that make up the video
+        :param vidpath: [optional] <str>, path to the video
         :param json_dict: [optional] <dict>, json dictionary to load from
         """
-        assert not (images and json_dict), 'Do not give both <images> and <json_dict>'
-        self.images = images
-        self.json_dict = json_dict
-    def serialized(self):
+        assert bool(vidpath) ^ bool(json_dict)
+        if not json_dict:
+            self.images = load_images
+            self.json_dict = None
+        else:
+            self.deserialized(json_dict)
+
+
+    def serialized(self) -> dict:
         video_dict = {
             'images': [image.serialized() for image in self.images]
         }
         return video_dict
-    def deserialized(self, json_dict: dict):
-        self.images =
+
+    def deserialized(self, json_dict: dict) -> object:
+        self.images = [Image(video_dict) for video_dict in json_dict['images']]
+        return self
+
+    def load_images(self) -> list:
+        """
+        Returns a list of the images that make up the video
+        """

@@ -40,21 +40,55 @@ class Image(JSer):
         return self
 
     def get_box(self, point: tuple=None) -> Box:
-        filtered_boxes = filter(lambda box: box.intersects(point), self.boxes)
-        pass
+        """
+        Returns the smallest box among all the boxes that contain the point
+        :param point: [optional] <tuple<float, float>>, a coordinate in (x, y) notation
+        """
+        if tuple:
+            filtered_boxes = filter(lambda box: box.intersects(point), self.boxes)
+            if filtered_boxes:
+                sorted_boxes = sorted(filtered_boxes, key=lambda box: box.get_area())
+                return sorted_boxes[0]
+            else:
+                return None
+        else:
+            return None
 
     def add_box(self, box: Box) -> None:
-        pass
+        """
+        Adds a box to the image
+        :param box: <Box>, the box that is added to the image
+        """
+        self.boxes.append(box)
 
     def remove_box(self, box: Box=None, point: tuple=None) -> None:
+        """
+        Removes a box from the image, or removes the smallest box that contains the point
+        :param box: [optional] <Box>, the box that is removed from the image
+        :param point: [optional] <tuple<float, float>>, the point where the smallest box that contains it is removed
+        """
         assert bool(box) ^ bool(point), 'Please provide exactly one of <box> or <point>.'
-        pass
+        if box:
+            self.boxes.remove(box)
+        else:
+            self.boxes.remove(self.get_box(point))
 
     def set_active_box(self, box: Box=None, point: tuple=None) -> None:
+        """
+        Sets the image's active box to be the box parameter or the smallest box that contains the point
+        :param box: the box that is set as the image's active box
+        :param point: the point where the smallest box that contains it will be set as the image's active box
+        """
         assert bool(box) ^ bool(point), 'Please provide exactly one of <box> or <point>.'
-        pass
+        if box:
+            self.active_box = box
+        else:
+            self.active_box = self.get_box(point)
 
     def get_active_box(self) -> Box:
+        """
+        Returns the image's active box
+        """
         return self.active_box
 
     def render(self, size: tuple) -> QPixmap:
